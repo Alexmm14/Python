@@ -24,76 +24,61 @@ def print_first_contentful_paint(url, api_key):
     fcp_value = get_first_contentful_paint(url, api_key)
 
     if fcp_value is not None:
-        print("------------------")
+        print("********************")
         print(f"First Contentful Paint (FCP): {fcp_value} segundos")
-        print("------------------")
-
+        print("********************")
 
 def get_technology_info_formatted(url, api_key):
-
     api_url = 'https://whatcms.org/API/Tech'
     params = {'key': api_key, 'url': url}
 
     response = requests.get(api_url, params=params)
     tech_info_raw = response.text
-    
-    # Intenta cargar el JSON y formatearlo
+
+    print("Entre en la funcion")
     try:
-        tech_info_json = json.loads(tech_info_raw)
-        for result in tech_info_json["results"]:
-            
+        hostname_json = json.loads(tech_info_raw)
+        for result in hostname_json["results"]:
             nombre = result["name"]
             version = result["version"] if "version" in result else "N/A"
             categorias = result["categories"] if "categories" in result else ["N/A"]
-            for categoria in categorias:
-                print(f" - {categoria}")
-                print("-" * 20)
+
+            print("********************")
             print(f"Nombre: {nombre}")
             print(f"Version: {version}")
             print("Categorias:")
             
-            
+            for categoria in categorias:
+                print(f" - {categoria}")
+                print("-" * 20)
 
-        
     except json.JSONDecodeError as e:
         print(f"Error al decodificar JSON: {e}")
         print("\nRespuesta JSON (en bruto):")
         print("------------------")
         print(tech_info_raw)
 
-
 def getHostsThisSite(url, api_key):
     api_url = 'https://www.who-hosts-this.com/API/Host'
-    params = {'key': api_key, 'url':url}
+    params = {'key': api_key, 'url': url}
 
     response = requests.get(api_url, params=params)
     tech_info_raw = response.text
 
     try:
-        tech_info_json = json.loads(tech_info_raw)
-        for result in tech_info_json["results"]:
-            
+        hostname_json = json.loads(tech_info_raw)
+        for result in hostname_json["results"]:
             nombre = result["isp_name"]
-            """version = result["version"] if "version" in result else "N/A"
-            categorias = result["categories"] if "categories" in result else ["N/A"]
-            for categoria in categorias:
-                print(f" - {categoria}")
-                print("-" * 20)"""
-            print("------------------")
-            print(f"Nombre: {nombre}")
-            print("------------------")
-            """print(f"Version: {version}")
-            print("Categorias:")"""
-            
-            
 
-        
+            print("********************")
+            print(f"Nombre: {nombre}")
+            print("********************")
+
     except json.JSONDecodeError as e:
         print(f"Error al decodificar JSON: {e}")
         print("\nRespuesta JSON (en bruto):")
         print("------------------")
         print(tech_info_raw)
-
 
 if __name__ == "__main__":
     # URL que deseas analizar
@@ -107,11 +92,10 @@ if __name__ == "__main__":
 
     # Obtener información de tecnología a través de la API en formato JSON formateado
     get_technology_info_formatted(url, api_key_whatcms)
-    #imprime en que host se localiza
-    getHostsThisSite(url, api_key_whatcms)
-    # Imprimir el valor de FIRST_CONTENTFUL_PAINT_MS
     
+    
+    # Imprimir el valor de FIRST_CONTENTFUL_PAINT_MS
     print_first_contentful_paint(url, api_key_psi)
 
-    
-    
+    getHostsThisSite(url, api_key_whatcms)
+
