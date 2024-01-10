@@ -15,7 +15,8 @@ def get_first_contentful_paint(url, api_key):
     try:
         fcp_value = data["loadingExperience"]["metrics"]["FIRST_CONTENTFUL_PAINT_MS"]["percentile"]
         fcp_value_s = fcp_value / 1000
-        return fcp_value_s
+
+        return str(fcp_value_s) + ' Segundos'
     except KeyError:
         print("------------------")
         print("La clave FIRST_CONTENTFUL_PAINT_MS no se encuentra en la respuesta.")
@@ -109,9 +110,6 @@ def getHostsThisSite(url, api_key):
 
 
 def crear_informe(diccionario):
-    herramientas = diccionario
-    
-    
     # Crear un nuevo documento de Word
     doc = Document()
 
@@ -124,8 +122,21 @@ def crear_informe(diccionario):
 
     # Herramientas Utilizadas
     doc.add_heading('2. Herramientas Utilizadas:', level=2)
-    for i in herramientas:
-        doc.add_paragraph(str(i))  # Asumiendo que los elementos de la lista son convertibles a cadenas
+
+    for clave, valores in diccionario.items():
+        doc.add_heading(f"{clave}:", level=3)
+        
+        if clave in ['host', 'tiempo']:
+            # Concatenar los valores y agregarlos como un solo párrafo
+            doc.add_paragraph(" ".join(map(str, valores)))
+
+        else:
+            for valor in valores:
+                if isinstance(valor, list):
+                    for item in valor:
+                        doc.add_paragraph(f"- {item}")
+                else:
+                    doc.add_paragraph(str(valor))
 
     # Guardar el documento
     doc.save('Informe_Herramientas_Tiempo_Carga.docx')
@@ -154,3 +165,5 @@ if __name__ == "__main__":
     datos['tiempo'] = str(time)
 
     print(datos)
+
+    crear_informe(datos)
